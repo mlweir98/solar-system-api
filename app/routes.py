@@ -29,6 +29,7 @@ def list_all_planets():
 
 @planets_bp.route("/<planet_id>", methods = ["GET"])
 def list_specific_planet(planet_id):
+    planet_id = int(planet_id)
     for planet in planets:
         if planet_id == planet.id:
             return {
