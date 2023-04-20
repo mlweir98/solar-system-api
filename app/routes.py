@@ -1,12 +1,5 @@
 from flask import Blueprint, jsonify
 
-# Perform following setup steps for the Solar System API repo to get started on this Flask project:
-
-# 1. Create a virtual environment and activate it
-# 1. Install the dependencies
-# 1. Define a `Planet` class with the attributes `id`, `name`, and `description`, and one additional attribute
-# 1. Create a list of `Planet` instances
-
 class Planet:
     def __init__(self, id, name, description, color):
         self.id = id
@@ -34,4 +27,21 @@ def list_all_planets():
         })
     return jsonify(planets_list)
 
+@planets_bp.route("/<planet_id>", methods = ["GET"])
+def list_specific_planet(planet_id):
+    for planet in planets:
+        if planet_id == planet.id:
+            return {
+            "id": planet.id,
+            "name": planet.name,
+            "description": planet.description,
+            "color": planet.color
+        }
 
+
+# 1. ...to get one existing `planet`, so that I can see the `id`, `name`, 
+# `description`, and other data of the `planet`.
+# 1. ... such that trying to get one non-existing `planet` 
+# responds with get a `404` response, so that I know the `planet` resource was not found.
+# 1. ... such that trying to get one `planet` with an invalid 
+#     `planet_id` responds with get a `400` response, so that I know the `planet_id` was invalid.
