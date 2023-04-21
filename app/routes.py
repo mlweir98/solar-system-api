@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, abort, make_response
 
 class Planet:
     def __init__(self, id, name, description, color):
@@ -29,19 +29,30 @@ def list_all_planets():
 
 @planets_bp.route("/<planet_id>", methods = ["GET"])
 def list_specific_planet(planet_id):
-    planet_id = int(planet_id)
+    planet = validate_planet(planet_id)
+    
+    return {
+    "id": planet.id,
+    "name": planet.name,
+    "description": planet.description,
+    "color": planet.color
+}
+
+    
+
+def validate_planet(planet_id):
+    try:
+        planet_id = int(planet_id)
+    
+    except:
+        abort(make_response({"message":f"{planet_id} is not a valid planet"}, 400))
+    
     for planet in planets:
         if planet_id == planet.id:
-            return {
-            "id": planet.id,
-            "name": planet.name,
-            "description": planet.description,
-            "color": planet.color
-        }
+            return planet
 
+    abort(make_response({"message":f"{planet_id} was not found"}, 404))
 
-# 1. ...to get one existing `planet`, so that I can see the `id`, `name`, 
-# `description`, and other data of the `planet`.
 # 1. ... such that trying to get one non-existing `planet` 
 # responds with get a `404` response, so that I know the `planet` resource was not found.
 # 1. ... such that trying to get one `planet` with an invalid 
