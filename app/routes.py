@@ -21,6 +21,19 @@ def create_new_planet():
 
     return make_response({"message": f"{new_planet.name} was successfully created"}, 201)
 
+@planets_bp.route("", methods = ["GET"])
+def get_all_planets():
+    planets = Planet.query.all()
+    planets_response = []
+
+    for planet in planets:
+        planets_response.append({
+            "name" : planet.name,
+            "description" : planet.description,
+            "color" : planet.color
+        })
+        
+    return jsonify(planets_response)
 
 """
 planets= [
