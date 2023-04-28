@@ -1,12 +1,28 @@
-from flask import Blueprint, jsonify, abort, make_response
+from flask import Blueprint, jsonify, abort, make_response, request
+from app.models.planet import Planet
+from app import db
 
-class Planet:
-    def __init__(self, id, name, description, color):
-        self.id = id
-        self.name = name
-        self.description = description
-        self.color = color
 
+planets_bp = Blueprint("planets", __name__, url_prefix="/planets")
+
+#creating a post
+@planets_bp.route("", methods = ["POST"])
+def create_new_planet():
+    request_body = request.get_json()
+
+    new_planet = Planet(
+        name = request_body["name"],
+        description = request_body["description"],
+        color = request_body["color"]
+    )
+
+    db.session.add(new_planet)
+    db.session.commit()
+
+    return make_response({"message": f"{new_planet.name} was successfully created"}, 201)
+
+
+"""
 planets= [
         Planet(1, "Pluto", "Small", "redish-white"), 
         Planet(2, "Saturn", "Rings", "yellow"), 
@@ -52,8 +68,5 @@ def validate_planet(planet_id):
             return planet
 
     abort(make_response({"message":f"{planet_id} was not found"}, 404))
+"""
 
-# 1. ... such that trying to get one non-existing `planet` 
-# responds with get a `404` response, so that I know the `planet` resource was not found.
-# 1. ... such that trying to get one `planet` with an invalid 
-#     `planet_id` responds with get a `400` response, so that I know the `planet_id` was invalid.
