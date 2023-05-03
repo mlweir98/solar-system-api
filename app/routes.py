@@ -23,7 +23,18 @@ def create_new_planet():
 
 @planets_bp.route("", methods = ["GET"])
 def get_all_planets():
-    planets = Planet.query.all()
+    name_query = request.args.get("name")
+    color_query = request.args.get("color")
+
+    if color_query and name_query:
+        planets = Planet.query.filter_by(color = color_query, name = name_query)
+    elif color_query:
+        planets = Planet.query.filter_by(color = color_query)
+    elif name_query:
+        planets = Planet.query.filter_by(name = name_query)
+    else:
+        planets = Planet.query.all()
+
     planets_response = []
 
     for planet in planets:
