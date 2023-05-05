@@ -45,7 +45,7 @@ def get_all_planets():
             "color" : planet.color
         })
         
-    return jsonify(planets_response)
+    return jsonify(planets_response), 200
 
 def validate_planet(planet_id):
     try:
@@ -83,7 +83,7 @@ def update_planet(planet_id):
 
     db.session.commit()
 
-    return make_response(f"{planet.name} successfully updated")
+    return make_response(jsonify(f"{planet.name} successfully updated"))
 
 @planets_bp.route("/<planet_id>",methods = ["DELETE"])
 def delete_planet(planet_id):
@@ -92,7 +92,7 @@ def delete_planet(planet_id):
     db.session.delete(planet)
     db.session.commit()
 
-    return make_response(f"{planet.name} was deleted successfully"), 200
+    return make_response(jsonify(f"{planet.name} was deleted successfully")), 200
 
 """
 planets= [
