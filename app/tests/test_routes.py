@@ -1,3 +1,7 @@
+from app.routes import validate_model
+from app.models.planet import Planet
+import pytest
+
 def test_all_planet_returns_empty_list(client):
     response = client.get("/planets")
     response_body = response.get_json()
@@ -45,3 +49,11 @@ def test_delete_planet_returns_200(client, create_two_planets):
 
     assert response.status_code == 200 
     assert response_body == "jupiter was deleted successfully"
+
+def test_validate_model(create_two_planets):
+    response = validate_model(Planet, 1)
+
+    assert response.id == 1
+    assert response.name == "pluto"
+    assert response.description == "smol"
+    assert response.color== "blue"
