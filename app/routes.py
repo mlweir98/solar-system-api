@@ -97,7 +97,7 @@ def create_moon():
     return jsonify(f"Moon {new_moon.name} was succesfully created"), 201
 
 @moons_bp.route("", methods = ["GET"])
-def get_all_moons(moon_id):
+def get_all_moons():
     moons = Moon.query.all()
     moon_response = []
 
@@ -113,7 +113,7 @@ def get_all_moons(moon_id):
 @moons_bp.route("/<moon_id>/planets", methods = ["POST"])
 def create_planet_with_moons(moon_id):
     moon = validate_model(Moon, moon_id)
-    request_body = request.jet_json()
+    request_body = request.get_json()
 
     new_planet = Planet(
         name = request_body["name"],
