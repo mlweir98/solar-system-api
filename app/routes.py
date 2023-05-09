@@ -1,9 +1,11 @@
 from flask import Blueprint, jsonify, abort, make_response, request
 from app.models.planet import Planet
+from app.models.moon import Moon
 from app import db
 
 
 planets_bp = Blueprint("planets", __name__, url_prefix="/planets")
+moons_bp = Blueprint("moons", __name__, url_prefix = "/moons")
 
 #creating a post
 @planets_bp.route("", methods = ["POST"])
@@ -79,6 +81,51 @@ def delete_planet(planet_id):
     db.session.commit()
 
     return make_response(jsonify(f"{planet.name} was deleted successfully")), 200
+
+@moons_bp.route("", methods = ["POST"])
+def create_moon():
+
+    request_body = request.get_json()
+    new_moon = Moon(
+        name = request_body["name"]
+    )
+    
+
+    db.session.add(new_moon)
+    db.session.commit()
+
+    return jsonify(f"Moon {new_moon.name} was succesfully created"), 201
+
+@moons_bp.route("", methods = ["GET"])
+def get_all_moons(moon_id):
+    moons = Moon.query.all()
+    moon_response = []
+
+    for moon in moons:
+        moon_response.append({
+            "id": moon.id,
+            "name": moon.name
+        })
+    
+    return jsonify(moon_response), 200
+
+#nested routes
+@moons_bp.route("/<moon_id>/planets", methods = ["POST"])
+def create_planet_with_moons(moon_id):
+    moon = validate_model(Moon, moon_id)
+    request_body = request.jet_json()
+
+    new_planet = Planet(
+        name = request_body["name"],
+        description = request_body["description"],
+        color = request_body["color"],
+        moon = moon 
+    )
+
+    db.session.add(new_planet)
+    db.session.commit()
+
+    return jsonify(f"Planet {new_planet.name} has {new_planet.moon.name} was successfully created"), 201
 
 """
 planets= [
