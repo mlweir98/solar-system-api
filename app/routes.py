@@ -110,22 +110,20 @@ def get_all_moons():
     return jsonify(moon_response), 200
 
 #nested routes
-@moons_bp.route("/<moon_id>/planets", methods = ["POST"])
-def create_planet_with_moons(moon_id):
-    moon = validate_model(Moon, moon_id)
+@planets_bp.route("/<planet_id>/moons", methods = ["POST"])
+def create_moon_for_specific_planet(planet_id):
+    planet = validate_model(Planet, planet_id)
     request_body = request.get_json()
 
-    new_planet = Planet(
+    new_moon = Moon(
         name = request_body["name"],
-        description = request_body["description"],
-        color = request_body["color"],
-        moon = moon 
+        planet = planet 
     )
 
-    db.session.add(new_planet)
+    db.session.add(new_moon)
     db.session.commit()
 
-    return jsonify(f"Planet {new_planet.name} has {new_planet.moon.name} was successfully created"), 201
+    return jsonify(f"Planet {new_moon.planet.name} has {new_moon.name} was successfully created"), 201
 
 """
 planets= [
